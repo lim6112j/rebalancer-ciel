@@ -240,18 +240,18 @@ class MultiGridEnv:
         # sell any grids we want to sell
         # then buy any grids we want to buy
         if sell_index:
-            # NOTE: to simplify the problem, when we sell, we will sell ALL shares of that grid
+            # NOTE: to simplify the problem, when we sell, we will sell ALL grids of that grid
             for i in sell_index:
                 self.vehicle_in_hand += self.grid_demand[i] * self.grid_owned[i]
                 self.grid_owned[i] = 0
         if buy_index:
             # NOTE: when buying, we will loop through each grid we want to buy,
-            #       and buy one share at a time until we run out of vehicle
+            #       and buy one grid at a time until we run out of vehicle
             can_buy = True
             while can_buy:
                 for i in buy_index:
                     if self.vehicle_in_hand > self.grid_demand[i]:
-                        self.grid_owned[i] += 1  # buy one share
+                        self.grid_owned[i] += 1  # buy one grid
                         self.vehicle_in_hand -= self.grid_demand[i]
                     else:
                         can_buy = False
