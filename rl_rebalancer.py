@@ -3,12 +3,12 @@ import pandas as pd
 
 import torch
 import torch.nn as nn
-import torch.nn.functional as F
+# import torch.nn.functional as F
 
 from datetime import datetime
 import itertools
 import argparse
-import re
+# import re
 import os
 import pickle
 
@@ -242,7 +242,8 @@ class MultiGridEnv:
         if sell_index:
             # NOTE: to simplify the problem, when we sell, we will sell ALL grids of that grid
             for i in sell_index:
-                self.vehicle_in_hand += self.grid_demand[i] * self.grid_owned[i]
+                self.vehicle_in_hand += self.grid_demand[i] * \
+                    self.grid_owned[i]
                 self.grid_owned[i] = 0
         if buy_index:
             # NOTE: when buying, we will loop through each grid we want to buy,
