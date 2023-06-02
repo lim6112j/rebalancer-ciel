@@ -71,6 +71,10 @@ def maybe_make_dir(directory):
 
 
 class MLP(nn.Module):
+    """
+    Multilayer perceptron
+    """
+
     def __init__(self, n_inputs, n_action, n_hidden_layers=1, hidden_dim=32):
         super(MLP, self).__init__()
 
