@@ -135,12 +135,12 @@ class MultiGridEnv:
       - demand of grid 1 (using daily close demand)
       - demand of grid 2
       - demand of grid 3
-      - vehicles(or cash) owned (good investment , more vehicles)
+      - investments(or cash) owned (good investment , more investments)
     Action: categorical variable with 27 (3^3) possibilities
       - for each grid, you can:
-      - 0 = remove
+      - 0 = sell
       - 1 = hold
-      - 2 = add
+      - 2 = buy
     """
 
     def __init__(self, data, initial_investment=20000):
@@ -153,7 +153,7 @@ class MultiGridEnv:
         self.cur_step = None
         self.grid_owned = None
         self.grid_demand = None
-        self.vehicle_in_hand = None
+        self.investment_in_hand = None
 
         self.action_space = np.arange(3**self.n_grid)
 
@@ -180,7 +180,7 @@ class MultiGridEnv:
         self.cur_step = 0
         self.grid_owned = np.zeros(self.n_grid)
         self.grid_demand = self.grid_demand_history[self.cur_step]
-        self.vehicle_in_hand = self.initial_investment
+        self.investment_in_hand = self.initial_investment
         return self._get_obs()
 
     def step(self, action):
@@ -215,11 +215,11 @@ class MultiGridEnv:
         obs = np.empty(self.state_dim)
         obs[:self.n_grid] = self.grid_owned
         obs[self.n_grid:2*self.n_grid] = self.grid_demand
-        obs[-1] = self.vehicle_in_hand
+        obs[-1] = self.investment_in_hand
         return obs
 
     def _get_val(self):
-        return self.grid_owned.dot(self.grid_demand) + self.vehicle_in_hand
+        return self.grid_owned.dot(self.grid_demand) + self.investment_in_hand
 
     def _trade(self, action):
         # index the action we want to perform
@@ -246,18 +246,18 @@ class MultiGridEnv:
         if sell_index:
             # NOTE: to simplify the problem, when we sell, we will sell ALL grids of that grid
             for i in sell_index:
-                self.vehicle_in_hand += self.grid_demand[i] * \
+                self.investment_in_hand += self.grid_demand[i] * \
                     self.grid_owned[i]
                 self.grid_owned[i] = 0
         if buy_index:
             # NOTE: when buying, we will loop through each grid we want to buy,
-            #       and buy one grid at a time until we run out of vehicle
+            #       and buy one grid at a time until we run out of investment
             can_buy = True
             while can_buy:
                 for i in buy_index:
-                    if self.vehicle_in_hand > self.grid_demand[i]:
+                    if self.investment_in_hand > self.grid_demand[i]:
                         self.grid_owned[i] += 1  # buy one grid
-                        self.vehicle_in_hand -= self.grid_demand[i]
+                        self.investment_in_hand -= self.grid_demand[i]
                     else:
                         can_buy = False
 
